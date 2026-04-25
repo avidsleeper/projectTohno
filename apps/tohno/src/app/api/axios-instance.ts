@@ -1,13 +1,30 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 
-// Replace with your friend's backend URL when ready
-export const AXIOS_INSTANCE = <T>(config: AxiosRequestConfig): Promise<T> => {
-  const source = axios.create({ 
-    baseURL: 'https://api.example.com',
-    withCredentials: true 
-  });
+function getTokenFromCookie(): string | null {
+  const match = document.cookie.match(/(?:^|;\s*)token=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
-  return source(config).then((res) => res.data);
+const axiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+});
+
+axiosInstance.interceptors.request.use((config) => {
+  const token = getTokenFromCookie();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export const AXIOS_INSTANCE = <T>(url: string, config: RequestInit = {}): Promise<T> => {
+  const { method = 'GET', body, headers } = config;
+  return axiosInstance({
+    url,
+    method,
+    data: body ? JSON.parse(body as string) : undefined,
+    headers: headers as Record<string, string>,
+  }).then((res) => res.data);
 };
 
 export default AXIOS_INSTANCE;
