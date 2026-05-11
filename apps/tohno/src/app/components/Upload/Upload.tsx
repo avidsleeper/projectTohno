@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePostDocuments, useGetDocumentsStripJobId } from "../../api/generated/documents/documents";
+import Navbar from '../Navbar/Navbar';
 
 export default function Upload() {
   const [file, setFile] = useState<File | null>(null);
