@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../Navbar/Navbar';
+import { useGetUsersTotpDevices, deleteUsersTotpDeviceId } from '../../api/generated/default/default';
 
 export default function AccountSettings() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [twoFAEnabled, setTwoFAEnabled] = useState(false);
+
+  const { data: totpDevices, refetch: refetchDevices } = useGetUsersTotpDevices();
 
   useEffect(() => {
     // Fetch user data from API
@@ -44,21 +47,12 @@ export default function AccountSettings() {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/users/2fa/disable`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${document.cookie.match(/(?:^|;\s*)token=([^;]+)/)?.[1] || ''}`
-        }
-      });
-
-      if (response.ok) {
-        setTwoFAEnabled(false);
-        alert('2FA disabled successfully');
-      } else {
-        alert('Failed to disable 2FA');
-      }
-    } catch (error) {
-      console.error('Disable 2FA error:', error);
+      const { data: devices } = await refetchDevices();
+      const ids = (devices as any[])?.map((d: any) => d._id).filter(Boolean) ?? [];
+      await Promise.all(ids.map((deviceId: string) => deleteUsersTotpDeviceId({ deviceId })));
+      setTwoFAEnabled(false);
+      alert('2FA disabled successfully');
+    } catch {
       alert('Error disabling 2FA');
     }
   };

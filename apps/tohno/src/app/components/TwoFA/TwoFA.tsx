@@ -1,73 +1,36 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../Navbar/Navbar';
+import { usePostUsersTotpSetup, usePostUsersTotpVerify } from '../../api/generated/default/default';
 
 export default function TwoFA() {
-  const [qrCode, setQrCode] = useState<string | null>(null);
   const [code, setCode] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [verifying, setVerifying] = useState(false);
+
+  const setupMutation = usePostUsersTotpSetup();
+  const verifyMutation = usePostUsersTotpVerify();
 
   useEffect(() => {
-    // Fetch QR code from API
-    const fetchQRCode = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/users/2fa/qr`, {
-          headers: {
-            'Authorization': `Bearer ${document.cookie.match(/(?:^|;\s*)token=([^;]+)/)?.[1] || ''}`
-          }
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          setQrCode(data.qrCode || data.qr);
-        } else {
-          alert('Failed to load QR code');
-        }
-      } catch (error) {
-        console.error('QR code fetch error:', error);
-        alert('Error loading QR code');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchQRCode();
+    setupMutation.mutate({ data: {} });
   }, []);
+
+  const qrCode = (setupMutation.data as any)?.qrCode;
 
   const handleVerify = () => {
     if (!code || code.length !== 6) {
       alert('Please enter a valid 6-digit code');
       return;
     }
-
-    setVerifying(true);
-    const verifyCode = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/users/2fa/verify`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${document.cookie.match(/(?:^|;\s*)token=([^;]+)/)?.[1] || ''}`
-          },
-          body: JSON.stringify({ code })
-        });
-
-        if (response.ok) {
+    verifyMutation.mutate(
+      { data: { token: code } },
+      {
+        onSuccess: () => {
           alert('2FA enabled successfully!');
           window.location.href = '/account-settings';
-        } else {
-          const error = await response.json();
-          alert(error.message || 'Invalid code. Please try again.');
-        }
-      } catch (error) {
-        console.error('Verification error:', error);
-        alert('Error verifying code');
-      } finally {
-        setVerifying(false);
+        },
+        onError: (error: any) => {
+          alert(error?.error || 'Invalid code. Please try again.');
+        },
       }
-    };
-
-    verifyCode();
+    );
   };
 
   return (
@@ -80,7 +43,7 @@ export default function TwoFA() {
             Scan this QR code with your authenticator app (Google Authenticator, Microsoft Authenticator, etc.)
           </p>
 
-          {loading ? (
+          {setupMutation.isPending ? (
             <div className="text-center py-10">
               <div className="text-5xl mb-4 animate-pulse">⏳</div>
               <p className="text-gray-500">Loading QR code...</p>
@@ -110,10 +73,10 @@ export default function TwoFA() {
 
                 <button
                   onClick={handleVerify}
-                  disabled={verifying || code.length !== 6}
+                  disabled={verifyMutation.isPending || code.length !== 6}
                   className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
                 >
-                  {verifying ? 'Verifying...' : 'Verify & Enable 2FA'}
+                  {verifyMutation.isPending ? 'Verifying...' : 'Verify & Enable 2FA'}
                 </button>
               </div>
 

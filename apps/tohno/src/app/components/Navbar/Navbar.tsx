@@ -16,7 +16,7 @@ export default function Navbar({ showNav = true }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <Link to="/" className="text-xl font-bold text-blue-600 hover:text-blue-700 transition">
-            DocShare
+            Tohno
           </Link>
           <div className="flex gap-6">
             <Link to="/" className="text-gray-700 font-medium hover:text-blue-600 transition">

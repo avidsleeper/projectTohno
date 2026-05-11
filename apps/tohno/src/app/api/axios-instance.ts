@@ -17,6 +17,16 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 && window.location.pathname !== '/login') {
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const AXIOS_INSTANCE = <T>(url: string, config: RequestInit = {}): Promise<T> => {
   const { method = 'GET', body, headers } = config;
   return axiosInstance({

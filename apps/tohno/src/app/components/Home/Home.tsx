@@ -45,7 +45,7 @@ export default function Home() {
       <div className="min-h-screen bg-gray-50">
       {/* Hero */}
       <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-16 px-6 text-center">
-        <h1 className="text-4xl font-extrabold mb-3 tracking-tight">Welcome to DocShare</h1>
+        <h1 className="text-4xl font-extrabold mb-3 tracking-tight">Welcome to Tohno</h1>
         <p className="text-blue-100 text-lg mb-8">Discover documents from students and teachers.</p>
 
         <button
