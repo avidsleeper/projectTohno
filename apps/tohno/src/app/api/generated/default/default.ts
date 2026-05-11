@@ -24,10 +24,13 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  DeleteUsersTotpDeviceId200,
+  DeleteUsersTotpDeviceId404,
   GetDebug200,
   GetDebug401,
   GetDebug500,
   GetUsers500,
+  GetUsersTotpDevices200Item,
   PostUsers201,
   PostUsers500,
   PostUsersBody,
@@ -35,11 +38,18 @@ import type {
   PostUsersLogin400,
   PostUsersLogin401,
   PostUsersLogin500,
-  PostUsersLoginBody
+  PostUsersLoginBody,
+  PostUsersTotpSetup200,
+  PostUsersTotpSetupBody,
+  PostUsersTotpVerify200,
+  PostUsersTotpVerify400,
+  PostUsersTotpVerifyBody
 } from '../model';
 
 import { AXIOS_INSTANCE } from '../../axios-instance';
 
+
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 
@@ -100,16 +110,16 @@ export const getGetDebugQueryKey = () => {
     }
 
 
-export const getGetDebugQueryOptions = <TData = Awaited<ReturnType<typeof getDebug>>, TError = GetDebug401 | GetDebug500>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDebug>>, TError, TData>>, }
+export const getGetDebugQueryOptions = <TData = Awaited<ReturnType<typeof getDebug>>, TError = GetDebug401 | GetDebug500>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDebug>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetDebugQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDebug>>> = ({ signal }) => getDebug({ signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDebug>>> = ({ signal }) => getDebug({ signal, ...requestOptions });
 
 
 
@@ -129,7 +139,7 @@ export function useGetDebug<TData = Awaited<ReturnType<typeof getDebug>>, TError
           TError,
           Awaited<ReturnType<typeof getDebug>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetDebug<TData = Awaited<ReturnType<typeof getDebug>>, TError = GetDebug401 | GetDebug500>(
@@ -139,11 +149,11 @@ export function useGetDebug<TData = Awaited<ReturnType<typeof getDebug>>, TError
           TError,
           Awaited<ReturnType<typeof getDebug>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetDebug<TData = Awaited<ReturnType<typeof getDebug>>, TError = GetDebug401 | GetDebug500>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDebug>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDebug>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -151,7 +161,7 @@ export function useGetDebug<TData = Awaited<ReturnType<typeof getDebug>>, TError
  */
 
 export function useGetDebug<TData = Awaited<ReturnType<typeof getDebug>>, TError = GetDebug401 | GetDebug500>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDebug>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDebug>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -224,16 +234,16 @@ export const getGetUsersQueryKey = () => {
     }
 
 
-export const getGetUsersQueryOptions = <TData = Awaited<ReturnType<typeof getUsers>>, TError = void | GetUsers500>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, }
+export const getGetUsersQueryOptions = <TData = Awaited<ReturnType<typeof getUsers>>, TError = void | GetUsers500>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetUsersQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUsers>>> = ({ signal }) => getUsers({ signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUsers>>> = ({ signal }) => getUsers({ signal, ...requestOptions });
 
 
 
@@ -253,7 +263,7 @@ export function useGetUsers<TData = Awaited<ReturnType<typeof getUsers>>, TError
           TError,
           Awaited<ReturnType<typeof getUsers>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsers<TData = Awaited<ReturnType<typeof getUsers>>, TError = void | GetUsers500>(
@@ -263,11 +273,11 @@ export function useGetUsers<TData = Awaited<ReturnType<typeof getUsers>>, TError
           TError,
           Awaited<ReturnType<typeof getUsers>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsers<TData = Awaited<ReturnType<typeof getUsers>>, TError = void | GetUsers500>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -275,7 +285,7 @@ export function useGetUsers<TData = Awaited<ReturnType<typeof getUsers>>, TError
  */
 
 export function useGetUsers<TData = Awaited<ReturnType<typeof getUsers>>, TError = void | GetUsers500>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -342,15 +352,15 @@ export const postUsers = async (postUsersBody: PostUsersBody, options?: RequestI
 
 
 export const getPostUsersMutationOptions = <TError = void | PostUsers500,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsers>>, TError,{data: PostUsersBody}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsers>>, TError,{data: PostUsersBody}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postUsers>>, TError,{data: PostUsersBody}, TContext> => {
 
 const mutationKey = ['postUsers'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
 
 
@@ -358,7 +368,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof postUsers>>, {data: PostUsersBody}> = (props) => {
           const {data} = props ?? {};
 
-          return  postUsers(data,)
+          return  postUsers(data,requestOptions)
         }
 
 
@@ -376,7 +386,7 @@ const {mutation: mutationOptions} = options ?
  * @summary Create a new user
  */
 export const usePostUsers = <TError = void | PostUsers500,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsers>>, TError,{data: PostUsersBody}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsers>>, TError,{data: PostUsersBody}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postUsers>>,
         TError,
@@ -441,15 +451,15 @@ export const postUsersLogin = async (postUsersLoginBody: PostUsersLoginBody, opt
 
 
 export const getPostUsersLoginMutationOptions = <TError = PostUsersLogin400 | PostUsersLogin401 | PostUsersLogin500,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersLogin>>, TError,{data: PostUsersLoginBody}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersLogin>>, TError,{data: PostUsersLoginBody}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postUsersLogin>>, TError,{data: PostUsersLoginBody}, TContext> => {
 
 const mutationKey = ['postUsersLogin'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
 
 
@@ -457,7 +467,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof postUsersLogin>>, {data: PostUsersLoginBody}> = (props) => {
           const {data} = props ?? {};
 
-          return  postUsersLogin(data,)
+          return  postUsersLogin(data,requestOptions)
         }
 
 
@@ -475,7 +485,7 @@ const {mutation: mutationOptions} = options ?
  * @summary Login user and get JWT token
  */
 export const usePostUsersLogin = <TError = PostUsersLogin400 | PostUsersLogin401 | PostUsersLogin500,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersLogin>>, TError,{data: PostUsersLoginBody}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersLogin>>, TError,{data: PostUsersLoginBody}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postUsersLogin>>,
         TError,
@@ -483,4 +493,438 @@ export const usePostUsersLogin = <TError = PostUsersLogin400 | PostUsersLogin401
         TContext
       > => {
       return useMutation(getPostUsersLoginMutationOptions(options), queryClient);
+    }
+    /**
+ * Generates a new TOTP secret and returns a provisioning URI and QR code. The device is not active until confirmed via /users/totp/verify.
+ * @summary Begin TOTP enrollment
+ */
+export type postUsersTotpSetupResponse200 = {
+  data: PostUsersTotpSetup200
+  status: 200
+}
+
+export type postUsersTotpSetupResponse401 = {
+  data: void
+  status: 401
+}
+
+export type postUsersTotpSetupResponse404 = {
+  data: void
+  status: 404
+}
+
+export type postUsersTotpSetupResponse500 = {
+  data: void
+  status: 500
+}
+
+export type postUsersTotpSetupResponseSuccess = (postUsersTotpSetupResponse200) & {
+  headers: Headers;
+};
+export type postUsersTotpSetupResponseError = (postUsersTotpSetupResponse401 | postUsersTotpSetupResponse404 | postUsersTotpSetupResponse500) & {
+  headers: Headers;
+};
+
+export type postUsersTotpSetupResponse = (postUsersTotpSetupResponseSuccess | postUsersTotpSetupResponseError)
+
+export const getPostUsersTotpSetupUrl = () => {
+
+
+
+
+  return `/users/totp/setup`
+}
+
+export const postUsersTotpSetup = async (postUsersTotpSetupBody: PostUsersTotpSetupBody, options?: RequestInit): Promise<postUsersTotpSetupResponse> => {
+
+  return AXIOS_INSTANCE<postUsersTotpSetupResponse>(getPostUsersTotpSetupUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      postUsersTotpSetupBody,)
+  }
+);}
+
+
+
+
+export const getPostUsersTotpSetupMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersTotpSetup>>, TError,{data: PostUsersTotpSetupBody}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+): UseMutationOptions<Awaited<ReturnType<typeof postUsersTotpSetup>>, TError,{data: PostUsersTotpSetupBody}, TContext> => {
+
+const mutationKey = ['postUsersTotpSetup'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postUsersTotpSetup>>, {data: PostUsersTotpSetupBody}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postUsersTotpSetup(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostUsersTotpSetupMutationResult = NonNullable<Awaited<ReturnType<typeof postUsersTotpSetup>>>
+    export type PostUsersTotpSetupMutationBody = PostUsersTotpSetupBody
+    export type PostUsersTotpSetupMutationError = void
+
+    /**
+ * @summary Begin TOTP enrollment
+ */
+export const usePostUsersTotpSetup = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersTotpSetup>>, TError,{data: PostUsersTotpSetupBody}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postUsersTotpSetup>>,
+        TError,
+        {data: PostUsersTotpSetupBody},
+        TContext
+      > => {
+      return useMutation(getPostUsersTotpSetupMutationOptions(options), queryClient);
+    }
+    /**
+ * Verifies a TOTP code against any unverified device on the account and marks it as active. Must be called after /users/totp/setup before the device is used at login.
+ * @summary Confirm TOTP enrollment
+ */
+export type postUsersTotpVerifyResponse200 = {
+  data: PostUsersTotpVerify200
+  status: 200
+}
+
+export type postUsersTotpVerifyResponse400 = {
+  data: PostUsersTotpVerify400
+  status: 400
+}
+
+export type postUsersTotpVerifyResponse401 = {
+  data: void
+  status: 401
+}
+
+export type postUsersTotpVerifyResponse404 = {
+  data: void
+  status: 404
+}
+
+export type postUsersTotpVerifyResponse500 = {
+  data: void
+  status: 500
+}
+
+export type postUsersTotpVerifyResponseSuccess = (postUsersTotpVerifyResponse200) & {
+  headers: Headers;
+};
+export type postUsersTotpVerifyResponseError = (postUsersTotpVerifyResponse400 | postUsersTotpVerifyResponse401 | postUsersTotpVerifyResponse404 | postUsersTotpVerifyResponse500) & {
+  headers: Headers;
+};
+
+export type postUsersTotpVerifyResponse = (postUsersTotpVerifyResponseSuccess | postUsersTotpVerifyResponseError)
+
+export const getPostUsersTotpVerifyUrl = () => {
+
+
+
+
+  return `/users/totp/verify`
+}
+
+export const postUsersTotpVerify = async (postUsersTotpVerifyBody: PostUsersTotpVerifyBody, options?: RequestInit): Promise<postUsersTotpVerifyResponse> => {
+
+  return AXIOS_INSTANCE<postUsersTotpVerifyResponse>(getPostUsersTotpVerifyUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      postUsersTotpVerifyBody,)
+  }
+);}
+
+
+
+
+export const getPostUsersTotpVerifyMutationOptions = <TError = PostUsersTotpVerify400 | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersTotpVerify>>, TError,{data: PostUsersTotpVerifyBody}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+): UseMutationOptions<Awaited<ReturnType<typeof postUsersTotpVerify>>, TError,{data: PostUsersTotpVerifyBody}, TContext> => {
+
+const mutationKey = ['postUsersTotpVerify'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postUsersTotpVerify>>, {data: PostUsersTotpVerifyBody}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postUsersTotpVerify(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostUsersTotpVerifyMutationResult = NonNullable<Awaited<ReturnType<typeof postUsersTotpVerify>>>
+    export type PostUsersTotpVerifyMutationBody = PostUsersTotpVerifyBody
+    export type PostUsersTotpVerifyMutationError = PostUsersTotpVerify400 | void
+
+    /**
+ * @summary Confirm TOTP enrollment
+ */
+export const usePostUsersTotpVerify = <TError = PostUsersTotpVerify400 | void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersTotpVerify>>, TError,{data: PostUsersTotpVerifyBody}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postUsersTotpVerify>>,
+        TError,
+        {data: PostUsersTotpVerifyBody},
+        TContext
+      > => {
+      return useMutation(getPostUsersTotpVerifyMutationOptions(options), queryClient);
+    }
+    /**
+ * Returns all TOTP devices on the account. Secrets are never included in the response.
+ * @summary List enrolled TOTP devices
+ */
+export type getUsersTotpDevicesResponse200 = {
+  data: GetUsersTotpDevices200Item[]
+  status: 200
+}
+
+export type getUsersTotpDevicesResponse401 = {
+  data: void
+  status: 401
+}
+
+export type getUsersTotpDevicesResponse404 = {
+  data: void
+  status: 404
+}
+
+export type getUsersTotpDevicesResponse500 = {
+  data: void
+  status: 500
+}
+
+export type getUsersTotpDevicesResponseSuccess = (getUsersTotpDevicesResponse200) & {
+  headers: Headers;
+};
+export type getUsersTotpDevicesResponseError = (getUsersTotpDevicesResponse401 | getUsersTotpDevicesResponse404 | getUsersTotpDevicesResponse500) & {
+  headers: Headers;
+};
+
+export type getUsersTotpDevicesResponse = (getUsersTotpDevicesResponseSuccess | getUsersTotpDevicesResponseError)
+
+export const getGetUsersTotpDevicesUrl = () => {
+
+
+
+
+  return `/users/totp/devices`
+}
+
+export const getUsersTotpDevices = async ( options?: RequestInit): Promise<getUsersTotpDevicesResponse> => {
+
+  return AXIOS_INSTANCE<getUsersTotpDevicesResponse>(getGetUsersTotpDevicesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetUsersTotpDevicesQueryKey = () => {
+    return [
+    `/users/totp/devices`
+    ] as const;
+    }
+
+
+export const getGetUsersTotpDevicesQueryOptions = <TData = Awaited<ReturnType<typeof getUsersTotpDevices>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersTotpDevices>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetUsersTotpDevicesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUsersTotpDevices>>> = ({ signal }) => getUsersTotpDevices({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUsersTotpDevices>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetUsersTotpDevicesQueryResult = NonNullable<Awaited<ReturnType<typeof getUsersTotpDevices>>>
+export type GetUsersTotpDevicesQueryError = void
+
+
+export function useGetUsersTotpDevices<TData = Awaited<ReturnType<typeof getUsersTotpDevices>>, TError = void>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersTotpDevices>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUsersTotpDevices>>,
+          TError,
+          Awaited<ReturnType<typeof getUsersTotpDevices>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetUsersTotpDevices<TData = Awaited<ReturnType<typeof getUsersTotpDevices>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersTotpDevices>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUsersTotpDevices>>,
+          TError,
+          Awaited<ReturnType<typeof getUsersTotpDevices>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetUsersTotpDevices<TData = Awaited<ReturnType<typeof getUsersTotpDevices>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersTotpDevices>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List enrolled TOTP devices
+ */
+
+export function useGetUsersTotpDevices<TData = Awaited<ReturnType<typeof getUsersTotpDevices>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersTotpDevices>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetUsersTotpDevicesQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+/**
+ * Permanently removes a TOTP device from the account. If it was the last verified device, TOTP will no longer be required at login.
+ * @summary Remove a TOTP device
+ */
+export type deleteUsersTotpDeviceIdResponse200 = {
+  data: DeleteUsersTotpDeviceId200
+  status: 200
+}
+
+export type deleteUsersTotpDeviceIdResponse401 = {
+  data: void
+  status: 401
+}
+
+export type deleteUsersTotpDeviceIdResponse404 = {
+  data: DeleteUsersTotpDeviceId404
+  status: 404
+}
+
+export type deleteUsersTotpDeviceIdResponse500 = {
+  data: void
+  status: 500
+}
+
+export type deleteUsersTotpDeviceIdResponseSuccess = (deleteUsersTotpDeviceIdResponse200) & {
+  headers: Headers;
+};
+export type deleteUsersTotpDeviceIdResponseError = (deleteUsersTotpDeviceIdResponse401 | deleteUsersTotpDeviceIdResponse404 | deleteUsersTotpDeviceIdResponse500) & {
+  headers: Headers;
+};
+
+export type deleteUsersTotpDeviceIdResponse = (deleteUsersTotpDeviceIdResponseSuccess | deleteUsersTotpDeviceIdResponseError)
+
+export const getDeleteUsersTotpDeviceIdUrl = (deviceId: string,) => {
+
+
+
+
+  return `/users/totp/${deviceId}`
+}
+
+export const deleteUsersTotpDeviceId = async (deviceId: string, options?: RequestInit): Promise<deleteUsersTotpDeviceIdResponse> => {
+
+  return AXIOS_INSTANCE<deleteUsersTotpDeviceIdResponse>(getDeleteUsersTotpDeviceIdUrl(deviceId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteUsersTotpDeviceIdMutationOptions = <TError = void | DeleteUsersTotpDeviceId404,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsersTotpDeviceId>>, TError,{deviceId: string}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteUsersTotpDeviceId>>, TError,{deviceId: string}, TContext> => {
+
+const mutationKey = ['deleteUsersTotpDeviceId'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteUsersTotpDeviceId>>, {deviceId: string}> = (props) => {
+          const {deviceId} = props ?? {};
+
+          return  deleteUsersTotpDeviceId(deviceId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteUsersTotpDeviceIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteUsersTotpDeviceId>>>
+
+    export type DeleteUsersTotpDeviceIdMutationError = void | DeleteUsersTotpDeviceId404
+
+    /**
+ * @summary Remove a TOTP device
+ */
+export const useDeleteUsersTotpDeviceId = <TError = void | DeleteUsersTotpDeviceId404,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsersTotpDeviceId>>, TError,{deviceId: string}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteUsersTotpDeviceId>>,
+        TError,
+        {deviceId: string},
+        TContext
+      > => {
+      return useMutation(getDeleteUsersTotpDeviceIdMutationOptions(options), queryClient);
     }

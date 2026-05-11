@@ -1,29 +1,39 @@
 import { useState } from 'react';
-import { useGetEssaysId, usePostEssaysIdComments, useGetEssaysIdComments } from "../../api/generated/default/default";
+import { useParams } from 'react-router-dom';
+import { useGetDocumentId } from "../../api/generated/documents/documents";
+import { useGetCommentsDocumentId, usePostComments, useDeleteCommentsCommentId } from "../../api/generated/comments/comments";
 
-interface PostPageProps {
-  postId: string; // passed via route params, e.g. useParams()
-}
-
-export default function Post({ postId }: PostPageProps) {
+export default function Post() {
+  const { postId = '' } = useParams<{ postId: string }>();
   const [commentText, setCommentText] = useState('');
 
-  // API: fetch the post/essay/video by ID
-  const { data: postData, isLoading: postLoading } = useGetEssaysId(postId);
-  const post = postData?.essay || postData;
+  const { data: postData, isLoading: postLoading } = useGetDocumentId(postId);
+  const post = postData as any;
 
-  // API: fetch comments for this post
-  const { data: commentsData, isLoading: commentsLoading, refetch: refetchComments } = useGetEssaysIdComments(postId);
-  const comments = commentsData?.comments || commentsData || [];
+  const { data: commentsData, isLoading: commentsLoading, refetch: refetchComments } = useGetCommentsDocumentId(postId);
+  const comments: any[] = (commentsData as any) || [];
 
-  // API: submit a new comment
-  const commentMutation = usePostEssaysIdComments(postId);
+  const commentMutation = usePostComments();
+  const deleteMutation = useDeleteCommentsCommentId();
+
+  const handleDeleteComment = (commentId: string) => {
+    deleteMutation.mutate({ commentId }, {
+      onSuccess: () => refetchComments(),
+      onError: (error: any) => {
+        const status = error?.response?.status;
+        if (status === 403) {
+          alert('You can only delete comments on your own documents.');
+        } else {
+          alert('Failed to delete comment.');
+        }
+      },
+    });
+  };
 
   const handleComment = () => {
     if (!commentText.trim()) return;
-
     commentMutation.mutate({
-      data: { content: commentText }
+      data: { documentId: postId, text: commentText }
     }, {
       onSuccess: () => {
         setCommentText('');
@@ -36,10 +46,26 @@ export default function Post({ postId }: PostPageProps) {
     });
   };
 
+  const handleDownload = async () => {
+    const match = document.cookie.match(/(?:^|;\s*)token=([^;]+)/);
+    const token = match ? decodeURIComponent(match[1]) : null;
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/${postId}/download`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!response.ok) { alert('Download failed.'); return; }
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = post?.filename || 'document.docx';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   if (postLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-400">Loading post...</p>
+        <p className="text-gray-400">Loading document...</p>
       </div>
     );
   }
@@ -47,7 +73,7 @@ export default function Post({ postId }: PostPageProps) {
   if (!post) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">Post not found.</p>
+        <p className="text-gray-500">Document not found.</p>
       </div>
     );
   }
@@ -62,36 +88,27 @@ export default function Post({ postId }: PostPageProps) {
         >
           ← Back to Home
         </span>
-        <span className={`text-xs px-2 py-1 rounded-full font-medium ml-auto ${post.type === 'video' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'}`}>
-          {post.type === 'video' ? '🎬 Video' : '📝 Essay'}
+        <span className="text-xs px-2 py-1 rounded-full font-medium ml-auto bg-green-100 text-green-700">
+          📄 Document
         </span>
       </div>
 
       {/* Main layout: content left, comments right */}
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 p-6 h-[calc(100vh-65px)]">
 
-        {/* Left: Post Content */}
+        {/* Left: Document Info */}
         <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 overflow-y-auto p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{post.title}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{post.filename}</h1>
           <p className="text-sm text-gray-500 mb-6">
-            By <span className="font-medium text-gray-700">{post.author}</span> · {new Date(post.createdAt).toLocaleDateString()}
+            Uploaded {post.uploadedAt ? new Date(post.uploadedAt).toLocaleDateString() : '—'}
+            {post.processedAt && ` · Processed ${new Date(post.processedAt).toLocaleDateString()}`}
           </p>
-
-          {post.type === 'video' ? (
-            // Video player
-            <div className="rounded-xl overflow-hidden bg-black aspect-video mb-4">
-              <video
-                src={post.videoUrl}
-                controls
-                className="w-full h-full object-contain"
-              />
-            </div>
-          ) : (
-            // Essay text
-            <div className="prose prose-gray max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap text-base">
-              {post.content}
-            </div>
-          )}
+          <button
+            onClick={handleDownload}
+            className="inline-block bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm"
+          >
+            Download Document
+          </button>
         </div>
 
         {/* Right: Comments */}
@@ -110,12 +127,30 @@ export default function Post({ postId }: PostPageProps) {
               <p className="text-gray-400 text-sm text-center py-8">No comments yet. Be the first!</p>
             ) : (
               comments.map((comment: any) => (
-                <div key={comment.id} className="border-b border-gray-100 pb-4 last:border-0">
+                <div key={comment._id} className="border-b border-gray-100 pb-4 last:border-0">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-semibold text-gray-800">{comment.author}</span>
-                    <span className="text-xs text-gray-400">{new Date(comment.createdAt).toLocaleDateString()}</span>
+                    <span className="text-sm font-semibold text-gray-800">
+                      {comment.userId?.screen_name || 'Anonymous'}
+                      {comment.userId?.teacher && (
+                        <span className="ml-1 text-xs text-purple-600">(Teacher)</span>
+                      )}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-400">
+                        {comment.createdAt ? new Date(comment.createdAt).toLocaleDateString() : ''}
+                      </span>
+                      {!comment.userId?.teacher && (
+                        <button
+                          onClick={() => handleDeleteComment(comment._id)}
+                          disabled={deleteMutation.isPending}
+                          className="text-xs text-red-400 hover:text-red-600 transition-colors disabled:opacity-50"
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <p className="text-sm text-gray-600">{comment.content}</p>
+                  <p className="text-sm text-gray-600">{comment.text}</p>
                 </div>
               ))
             )}

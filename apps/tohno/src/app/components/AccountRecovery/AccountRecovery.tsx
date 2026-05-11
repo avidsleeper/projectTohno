@@ -1,29 +1,15 @@
 import { useState } from 'react';
-import { usePostUsersRecovery } from "../../api/generated/default/default";
 
 export default function AccountRecovery() {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
-
-  const recoveryMutation = usePostUsersRecovery();
 
   const handleSubmit = () => {
     if (!email.includes('@')) {
       alert("Please enter a valid email address.");
       return;
     }
-
-    recoveryMutation.mutate({
-      data: { email }
-    }, {
-      onSuccess: () => {
-        setSent(true);
-      },
-      onError: (error: any) => {
-        console.error('Recovery error:', error);
-        alert('Something went wrong. Please try again.');
-      }
-    });
+    setSent(true);
   };
 
   return (
@@ -31,7 +17,6 @@ export default function AccountRecovery() {
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
 
         {sent ? (
-          // Success state
           <div className="text-center">
             <div className="text-5xl mb-4">📬</div>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Check your inbox</h2>
@@ -46,7 +31,6 @@ export default function AccountRecovery() {
             </span>
           </div>
         ) : (
-          // Input state
           <>
             <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">Recover Account</h2>
             <p className="text-sm text-gray-500 text-center mb-6">
@@ -67,10 +51,9 @@ export default function AccountRecovery() {
 
               <button
                 onClick={handleSubmit}
-                disabled={recoveryMutation.isPending}
-                className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+                className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
               >
-                {recoveryMutation.isPending ? 'Sending...' : 'Send Recovery Email'}
+                Send Recovery Email
               </button>
             </div>
 

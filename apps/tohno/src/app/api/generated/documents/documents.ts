@@ -39,6 +39,8 @@ import type {
 import { AXIOS_INSTANCE } from '../../axios-instance';
 
 
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
 
 
 /**
@@ -98,15 +100,15 @@ export const post = async (postBody: PostBody, options?: RequestInit): Promise<p
 
 
 export const getPostMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof post>>, TError,{data: PostBody}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof post>>, TError,{data: PostBody}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ): UseMutationOptions<Awaited<ReturnType<typeof post>>, TError,{data: PostBody}, TContext> => {
 
 const mutationKey = ['post'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
 
 
@@ -114,7 +116,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof post>>, {data: PostBody}> = (props) => {
           const {data} = props ?? {};
 
-          return  post(data,)
+          return  post(data,requestOptions)
         }
 
 
@@ -132,7 +134,7 @@ const {mutation: mutationOptions} = options ?
  * @summary Upload a document
  */
 export const usePost = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof post>>, TError,{data: PostBody}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof post>>, TError,{data: PostBody}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof post>>,
         TError,
@@ -194,16 +196,16 @@ export const getGetQueryKey = () => {
     }
 
 
-export const getGetQueryOptions = <TData = Awaited<ReturnType<typeof get>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>>, }
+export const getGetQueryOptions = <TData = Awaited<ReturnType<typeof get>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof get>>> = ({ signal }) => get({ signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof get>>> = ({ signal }) => get({ signal, ...requestOptions });
 
 
 
@@ -223,7 +225,7 @@ export function useGet<TData = Awaited<ReturnType<typeof get>>, TError = void>(
           TError,
           Awaited<ReturnType<typeof get>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGet<TData = Awaited<ReturnType<typeof get>>, TError = void>(
@@ -233,11 +235,11 @@ export function useGet<TData = Awaited<ReturnType<typeof get>>, TError = void>(
           TError,
           Awaited<ReturnType<typeof get>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGet<TData = Awaited<ReturnType<typeof get>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -245,7 +247,7 @@ export function useGet<TData = Awaited<ReturnType<typeof get>>, TError = void>(
  */
 
 export function useGet<TData = Awaited<ReturnType<typeof get>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -319,16 +321,16 @@ export const getGetStripJobIdQueryKey = (jobId: string,) => {
     }
 
 
-export const getGetStripJobIdQueryOptions = <TData = Awaited<ReturnType<typeof getStripJobId>>, TError = void>(jobId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStripJobId>>, TError, TData>>, }
+export const getGetStripJobIdQueryOptions = <TData = Awaited<ReturnType<typeof getStripJobId>>, TError = void>(jobId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStripJobId>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetStripJobIdQueryKey(jobId);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStripJobId>>> = ({ signal }) => getStripJobId(jobId, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStripJobId>>> = ({ signal }) => getStripJobId(jobId, { signal, ...requestOptions });
 
 
 
@@ -348,7 +350,7 @@ export function useGetStripJobId<TData = Awaited<ReturnType<typeof getStripJobId
           TError,
           Awaited<ReturnType<typeof getStripJobId>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetStripJobId<TData = Awaited<ReturnType<typeof getStripJobId>>, TError = void>(
@@ -358,11 +360,11 @@ export function useGetStripJobId<TData = Awaited<ReturnType<typeof getStripJobId
           TError,
           Awaited<ReturnType<typeof getStripJobId>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetStripJobId<TData = Awaited<ReturnType<typeof getStripJobId>>, TError = void>(
- jobId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStripJobId>>, TError, TData>>, }
+ jobId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStripJobId>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -370,7 +372,7 @@ export function useGetStripJobId<TData = Awaited<ReturnType<typeof getStripJobId
  */
 
 export function useGetStripJobId<TData = Awaited<ReturnType<typeof getStripJobId>>, TError = void>(
- jobId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStripJobId>>, TError, TData>>, }
+ jobId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStripJobId>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -443,15 +445,15 @@ export const postSearch = async (postSearchBody: PostSearchBody, options?: Reque
 
 
 export const getPostSearchMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postSearch>>, TError,{data: PostSearchBody}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postSearch>>, TError,{data: PostSearchBody}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postSearch>>, TError,{data: PostSearchBody}, TContext> => {
 
 const mutationKey = ['postSearch'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
 
 
@@ -459,7 +461,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof postSearch>>, {data: PostSearchBody}> = (props) => {
           const {data} = props ?? {};
 
-          return  postSearch(data,)
+          return  postSearch(data,requestOptions)
         }
 
 
@@ -477,7 +479,7 @@ const {mutation: mutationOptions} = options ?
  * @summary Semantic search over documents
  */
 export const usePostSearch = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postSearch>>, TError,{data: PostSearchBody}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postSearch>>, TError,{data: PostSearchBody}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postSearch>>,
         TError,
@@ -544,16 +546,16 @@ export const getGetRandomQueryKey = () => {
     }
 
 
-export const getGetRandomQueryOptions = <TData = Awaited<ReturnType<typeof getRandom>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRandom>>, TError, TData>>, }
+export const getGetRandomQueryOptions = <TData = Awaited<ReturnType<typeof getRandom>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRandom>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetRandomQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRandom>>> = ({ signal }) => getRandom({ signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRandom>>> = ({ signal }) => getRandom({ signal, ...requestOptions });
 
 
 
@@ -573,7 +575,7 @@ export function useGetRandom<TData = Awaited<ReturnType<typeof getRandom>>, TErr
           TError,
           Awaited<ReturnType<typeof getRandom>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetRandom<TData = Awaited<ReturnType<typeof getRandom>>, TError = void>(
@@ -583,11 +585,11 @@ export function useGetRandom<TData = Awaited<ReturnType<typeof getRandom>>, TErr
           TError,
           Awaited<ReturnType<typeof getRandom>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetRandom<TData = Awaited<ReturnType<typeof getRandom>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRandom>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRandom>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -595,7 +597,7 @@ export function useGetRandom<TData = Awaited<ReturnType<typeof getRandom>>, TErr
  */
 
 export function useGetRandom<TData = Awaited<ReturnType<typeof getRandom>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRandom>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRandom>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -664,16 +666,16 @@ export const getGetMyDocumentsQueryKey = () => {
     }
 
 
-export const getGetMyDocumentsQueryOptions = <TData = Awaited<ReturnType<typeof getMyDocuments>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyDocuments>>, TError, TData>>, }
+export const getGetMyDocumentsQueryOptions = <TData = Awaited<ReturnType<typeof getMyDocuments>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyDocuments>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetMyDocumentsQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyDocuments>>> = ({ signal }) => getMyDocuments({ signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyDocuments>>> = ({ signal }) => getMyDocuments({ signal, ...requestOptions });
 
 
 
@@ -693,7 +695,7 @@ export function useGetMyDocuments<TData = Awaited<ReturnType<typeof getMyDocumen
           TError,
           Awaited<ReturnType<typeof getMyDocuments>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetMyDocuments<TData = Awaited<ReturnType<typeof getMyDocuments>>, TError = void>(
@@ -703,11 +705,11 @@ export function useGetMyDocuments<TData = Awaited<ReturnType<typeof getMyDocumen
           TError,
           Awaited<ReturnType<typeof getMyDocuments>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetMyDocuments<TData = Awaited<ReturnType<typeof getMyDocuments>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyDocuments>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyDocuments>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -715,7 +717,7 @@ export function useGetMyDocuments<TData = Awaited<ReturnType<typeof getMyDocumen
  */
 
 export function useGetMyDocuments<TData = Awaited<ReturnType<typeof getMyDocuments>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyDocuments>>, TError, TData>>, }
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyDocuments>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -784,16 +786,16 @@ export const getGetByUserUserIdQueryKey = (userId: string,) => {
     }
 
 
-export const getGetByUserUserIdQueryOptions = <TData = Awaited<ReturnType<typeof getByUserUserId>>, TError = void>(userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getByUserUserId>>, TError, TData>>, }
+export const getGetByUserUserIdQueryOptions = <TData = Awaited<ReturnType<typeof getByUserUserId>>, TError = void>(userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getByUserUserId>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetByUserUserIdQueryKey(userId);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getByUserUserId>>> = ({ signal }) => getByUserUserId(userId, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getByUserUserId>>> = ({ signal }) => getByUserUserId(userId, { signal, ...requestOptions });
 
 
 
@@ -813,7 +815,7 @@ export function useGetByUserUserId<TData = Awaited<ReturnType<typeof getByUserUs
           TError,
           Awaited<ReturnType<typeof getByUserUserId>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetByUserUserId<TData = Awaited<ReturnType<typeof getByUserUserId>>, TError = void>(
@@ -823,11 +825,11 @@ export function useGetByUserUserId<TData = Awaited<ReturnType<typeof getByUserUs
           TError,
           Awaited<ReturnType<typeof getByUserUserId>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetByUserUserId<TData = Awaited<ReturnType<typeof getByUserUserId>>, TError = void>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getByUserUserId>>, TError, TData>>, }
+ userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getByUserUserId>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -835,7 +837,7 @@ export function useGetByUserUserId<TData = Awaited<ReturnType<typeof getByUserUs
  */
 
 export function useGetByUserUserId<TData = Awaited<ReturnType<typeof getByUserUserId>>, TError = void>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getByUserUserId>>, TError, TData>>, }
+ userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getByUserUserId>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -914,16 +916,16 @@ export const getGetDocumentIdQueryKey = (documentId: string,) => {
     }
 
 
-export const getGetDocumentIdQueryOptions = <TData = Awaited<ReturnType<typeof getDocumentId>>, TError = void>(documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDocumentId>>, TError, TData>>, }
+export const getGetDocumentIdQueryOptions = <TData = Awaited<ReturnType<typeof getDocumentId>>, TError = void>(documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDocumentId>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetDocumentIdQueryKey(documentId);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDocumentId>>> = ({ signal }) => getDocumentId(documentId, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDocumentId>>> = ({ signal }) => getDocumentId(documentId, { signal, ...requestOptions });
 
 
 
@@ -943,7 +945,7 @@ export function useGetDocumentId<TData = Awaited<ReturnType<typeof getDocumentId
           TError,
           Awaited<ReturnType<typeof getDocumentId>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetDocumentId<TData = Awaited<ReturnType<typeof getDocumentId>>, TError = void>(
@@ -953,11 +955,11 @@ export function useGetDocumentId<TData = Awaited<ReturnType<typeof getDocumentId
           TError,
           Awaited<ReturnType<typeof getDocumentId>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetDocumentId<TData = Awaited<ReturnType<typeof getDocumentId>>, TError = void>(
- documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDocumentId>>, TError, TData>>, }
+ documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDocumentId>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -965,7 +967,7 @@ export function useGetDocumentId<TData = Awaited<ReturnType<typeof getDocumentId
  */
 
 export function useGetDocumentId<TData = Awaited<ReturnType<typeof getDocumentId>>, TError = void>(
- documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDocumentId>>, TError, TData>>, }
+ documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDocumentId>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -1037,15 +1039,15 @@ export const deleteDocumentId = async (documentId: string, options?: RequestInit
 
 
 export const getDeleteDocumentIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteDocumentId>>, TError,{documentId: string}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteDocumentId>>, TError,{documentId: string}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteDocumentId>>, TError,{documentId: string}, TContext> => {
 
 const mutationKey = ['deleteDocumentId'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
 
 
@@ -1053,7 +1055,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteDocumentId>>, {documentId: string}> = (props) => {
           const {documentId} = props ?? {};
 
-          return  deleteDocumentId(documentId,)
+          return  deleteDocumentId(documentId,requestOptions)
         }
 
 
@@ -1071,7 +1073,7 @@ const {mutation: mutationOptions} = options ?
  * @summary Delete a document
  */
 export const useDeleteDocumentId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteDocumentId>>, TError,{documentId: string}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteDocumentId>>, TError,{documentId: string}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteDocumentId>>,
         TError,
@@ -1138,16 +1140,16 @@ export const getGetDocumentIdDownloadQueryKey = (documentId: string,) => {
     }
 
 
-export const getGetDocumentIdDownloadQueryOptions = <TData = Awaited<ReturnType<typeof getDocumentIdDownload>>, TError = void>(documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDocumentIdDownload>>, TError, TData>>, }
+export const getGetDocumentIdDownloadQueryOptions = <TData = Awaited<ReturnType<typeof getDocumentIdDownload>>, TError = void>(documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDocumentIdDownload>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetDocumentIdDownloadQueryKey(documentId);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDocumentIdDownload>>> = ({ signal }) => getDocumentIdDownload(documentId, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDocumentIdDownload>>> = ({ signal }) => getDocumentIdDownload(documentId, { signal, ...requestOptions });
 
 
 
@@ -1167,7 +1169,7 @@ export function useGetDocumentIdDownload<TData = Awaited<ReturnType<typeof getDo
           TError,
           Awaited<ReturnType<typeof getDocumentIdDownload>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetDocumentIdDownload<TData = Awaited<ReturnType<typeof getDocumentIdDownload>>, TError = void>(
@@ -1177,11 +1179,11 @@ export function useGetDocumentIdDownload<TData = Awaited<ReturnType<typeof getDo
           TError,
           Awaited<ReturnType<typeof getDocumentIdDownload>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetDocumentIdDownload<TData = Awaited<ReturnType<typeof getDocumentIdDownload>>, TError = void>(
- documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDocumentIdDownload>>, TError, TData>>, }
+ documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDocumentIdDownload>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1189,7 +1191,7 @@ export function useGetDocumentIdDownload<TData = Awaited<ReturnType<typeof getDo
  */
 
 export function useGetDocumentIdDownload<TData = Awaited<ReturnType<typeof getDocumentIdDownload>>, TError = void>(
- documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDocumentIdDownload>>, TError, TData>>, }
+ documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDocumentIdDownload>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 

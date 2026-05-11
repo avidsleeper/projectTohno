@@ -40,6 +40,8 @@ import type {
 import { AXIOS_INSTANCE } from '../../axios-instance';
 
 
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
 
 
 /**
@@ -100,16 +102,16 @@ export const getGetCommentsDocumentIdQueryKey = (documentId: string,) => {
     }
 
 
-export const getGetCommentsDocumentIdQueryOptions = <TData = Awaited<ReturnType<typeof getCommentsDocumentId>>, TError = void | GetCommentsDocumentId500>(documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCommentsDocumentId>>, TError, TData>>, }
+export const getGetCommentsDocumentIdQueryOptions = <TData = Awaited<ReturnType<typeof getCommentsDocumentId>>, TError = void | GetCommentsDocumentId500>(documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCommentsDocumentId>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ) => {
 
-const {query: queryOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetCommentsDocumentIdQueryKey(documentId);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getCommentsDocumentId>>> = ({ signal }) => getCommentsDocumentId(documentId, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getCommentsDocumentId>>> = ({ signal }) => getCommentsDocumentId(documentId, { signal, ...requestOptions });
 
 
 
@@ -129,7 +131,7 @@ export function useGetCommentsDocumentId<TData = Awaited<ReturnType<typeof getCo
           TError,
           Awaited<ReturnType<typeof getCommentsDocumentId>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCommentsDocumentId<TData = Awaited<ReturnType<typeof getCommentsDocumentId>>, TError = void | GetCommentsDocumentId500>(
@@ -139,11 +141,11 @@ export function useGetCommentsDocumentId<TData = Awaited<ReturnType<typeof getCo
           TError,
           Awaited<ReturnType<typeof getCommentsDocumentId>>
         > , 'initialData'
-      >, }
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCommentsDocumentId<TData = Awaited<ReturnType<typeof getCommentsDocumentId>>, TError = void | GetCommentsDocumentId500>(
- documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCommentsDocumentId>>, TError, TData>>, }
+ documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCommentsDocumentId>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -151,7 +153,7 @@ export function useGetCommentsDocumentId<TData = Awaited<ReturnType<typeof getCo
  */
 
 export function useGetCommentsDocumentId<TData = Awaited<ReturnType<typeof getCommentsDocumentId>>, TError = void | GetCommentsDocumentId500>(
- documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCommentsDocumentId>>, TError, TData>>, }
+ documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCommentsDocumentId>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -224,15 +226,15 @@ export const postComments = async (postCommentsBody: PostCommentsBody, options?:
 
 
 export const getPostCommentsMutationOptions = <TError = PostComments400 | void | PostComments500,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postComments>>, TError,{data: PostCommentsBody}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postComments>>, TError,{data: PostCommentsBody}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postComments>>, TError,{data: PostCommentsBody}, TContext> => {
 
 const mutationKey = ['postComments'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
 
 
@@ -240,7 +242,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof postComments>>, {data: PostCommentsBody}> = (props) => {
           const {data} = props ?? {};
 
-          return  postComments(data,)
+          return  postComments(data,requestOptions)
         }
 
 
@@ -258,7 +260,7 @@ const {mutation: mutationOptions} = options ?
  * @summary Add a comment to a document
  */
 export const usePostComments = <TError = PostComments400 | void | PostComments500,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postComments>>, TError,{data: PostCommentsBody}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postComments>>, TError,{data: PostCommentsBody}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postComments>>,
         TError,
@@ -328,15 +330,15 @@ export const deleteCommentsCommentId = async (commentId: string, options?: Reque
 
 
 export const getDeleteCommentsCommentIdMutationOptions = <TError = DeleteCommentsCommentId401 | DeleteCommentsCommentId403 | DeleteCommentsCommentId404 | DeleteCommentsCommentId500,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCommentsCommentId>>, TError,{commentId: string}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCommentsCommentId>>, TError,{commentId: string}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteCommentsCommentId>>, TError,{commentId: string}, TContext> => {
 
 const mutationKey = ['deleteCommentsCommentId'];
-const {mutation: mutationOptions} = options ?
+const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
       : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+      : {mutation: { mutationKey, }, request: undefined};
 
 
 
@@ -344,7 +346,7 @@ const {mutation: mutationOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteCommentsCommentId>>, {commentId: string}> = (props) => {
           const {commentId} = props ?? {};
 
-          return  deleteCommentsCommentId(commentId,)
+          return  deleteCommentsCommentId(commentId,requestOptions)
         }
 
 
@@ -362,7 +364,7 @@ const {mutation: mutationOptions} = options ?
  * @summary Delete a comment
  */
 export const useDeleteCommentsCommentId = <TError = DeleteCommentsCommentId401 | DeleteCommentsCommentId403 | DeleteCommentsCommentId404 | DeleteCommentsCommentId500,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCommentsCommentId>>, TError,{commentId: string}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCommentsCommentId>>, TError,{commentId: string}, TContext>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteCommentsCommentId>>,
         TError,

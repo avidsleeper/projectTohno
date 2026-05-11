@@ -4,7 +4,8 @@
  * Nanaya
  * OpenAPI spec version: 1.0.0
  */
+import type { PostUsersLogin401Error } from './postUsersLogin401Error';
 
 export type PostUsersLogin401 = {
-  error?: string;
+  error?: PostUsersLogin401Error;
 };

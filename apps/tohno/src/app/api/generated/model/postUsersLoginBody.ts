@@ -8,4 +8,6 @@
 export type PostUsersLoginBody = {
   email: string;
   password: string;
+  /** Current TOTP code. Required if the account has a verified 2FA device enrolled. */
+  totp?: string;
 };
