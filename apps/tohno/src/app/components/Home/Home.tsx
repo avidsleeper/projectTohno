@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useGetDocuments, usePostDocumentsSearch, getDocumentsRandom } from "../../api/generated/documents/documents";
 import type { Get200Item, PostSearch200ResultsItem } from "../../api/generated/model";
+import Navbar from '../Navbar/Navbar';
 
 export default function Home() {
   const [search, setSearch] = useState('');
@@ -39,7 +40,9 @@ export default function Home() {
   const loading = searching ? searchMutation.isPending : isLoading;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gray-50">
       {/* Hero */}
       <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-16 px-6 text-center">
         <h1 className="text-4xl font-extrabold mb-3 tracking-tight">Welcome to DocShare</h1>
@@ -114,5 +117,6 @@ export default function Home() {
         )}
       </div>
     </div>
+    </>
   );
 }

@@ -4,6 +4,7 @@ import { usePostUsersLogin } from "../../api/generated/default/default";
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [twoFACode, setTwoFACode] = useState('');
   
   const loginMutation = usePostUsersLogin();
 
@@ -18,10 +19,10 @@ export default function Login() {
       return;
     }
 
-    console.log("LOGIC CHECK - Sending to API:", { email, password });
+    console.log("LOGIC CHECK - Sending to API:", { email, password, twoFACode });
 
     loginMutation.mutate({
-      data: { email, password }
+      data: { email, password, twoFACode: twoFACode || undefined }
     }, {
       onSuccess: (response: any) => {
         const token = response.token || response.data?.token; 
@@ -62,6 +63,19 @@ export default function Login() {
             className="mt-1 border p-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
             onChange={(e) => setPassword(e.target.value)}
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">2FA Code (if enabled)</label>
+          <input 
+            type="text" 
+            placeholder="000000" 
+            maxLength={6}
+            className="mt-1 border p-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-center tracking-widest font-semibold" 
+            onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, ''))}
+            value={twoFACode}
+          />
+          <p className="text-xs text-gray-400 mt-1">Enter the 6-digit code from your authenticator app</p>
         </div>
 
         <button 

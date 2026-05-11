@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetDocumentsDocumentId } from "../../api/generated/documents/documents";
 import { useGetCommentsDocumentId, usePostComments, useDeleteCommentsCommentId } from "../../api/generated/comments/comments";
+import Navbar from '../Navbar/Navbar';
 
 export default function Post() {
   const { postId = '' } = useParams<{ postId: string }>();
@@ -64,22 +65,30 @@ export default function Post() {
 
   if (postLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-400">Loading document...</p>
-      </div>
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <p className="text-gray-400">Loading document...</p>
+        </div>
+      </>
     );
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">Document not found.</p>
-      </div>
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <p className="text-gray-500">Document not found.</p>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gray-50">
       {/* Top bar */}
       <div className="bg-white border-b px-6 py-4 flex items-center gap-4">
         <span
@@ -176,5 +185,6 @@ export default function Post() {
         </div>
       </div>
     </div>
+    </>
   );
 }
