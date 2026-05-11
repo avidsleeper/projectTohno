@@ -28,7 +28,7 @@ export default function Login() {
         const token = response.token || response.data?.token; 
         
         if (token) {
-          document.cookie = `token=${token}; path=/; max-age=86400; SameSite=Strict; Secure`;
+          document.cookie = `token=${token}; path=/; max-age=86400`;
           alert('Logged in successfully!');
           window.location.href = '/'; 
         }
