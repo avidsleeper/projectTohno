@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePost, useGetStripJobId } from "../../api/generated/documents/documents";
+import Navbar from '../Navbar/Navbar';
 
 export default function Upload() {
   const [file, setFile] = useState<File | null>(null);
@@ -64,18 +65,23 @@ export default function Upload() {
 
   if (jobId) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-5xl mb-4 animate-pulse">⏳</div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Processing your document</h2>
-          <p className="text-sm text-gray-500">Stripping metadata… this usually takes a few seconds.</p>
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-5xl mb-4 animate-pulse">⏳</div>
+            <h2 className="text-xl font-bold text-gray-800 mb-2">Processing your document</h2>
+            <p className="text-sm text-gray-500">Stripping metadata… this usually takes a few seconds.</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-10">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-8">
         <h2 className="text-3xl font-bold text-gray-800 mb-2 text-center">Upload Document</h2>
         <p className="text-sm text-gray-500 text-center mb-8">
@@ -136,5 +142,6 @@ export default function Upload() {
         </p>
       </div>
     </div>
+    </>
   );
 }
