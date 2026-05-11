@@ -1,0 +1,30 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - link "Home" [ref=e5] [cursor=pointer]:
+      - /url: /
+    - link "Login" [ref=e6] [cursor=pointer]:
+      - /url: /login
+    - link "Register" [ref=e7] [cursor=pointer]:
+      - /url: /register
+    - link "Upload" [ref=e8] [cursor=pointer]:
+      - /url: /upload
+  - generic [ref=e10]:
+    - heading "Register" [level=2] [ref=e11]
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]: Username
+        - textbox "Enter username" [ref=e15]
+      - generic [ref=e16]:
+        - generic [ref=e17]: Email Address
+        - textbox "name@email.com" [ref=e18]
+      - generic [ref=e19]:
+        - generic [ref=e20]: Password
+        - textbox "••••••••" [ref=e21]
+      - generic [ref=e22]:
+        - generic [ref=e23]: Confirm Password
+        - textbox "••••••••" [ref=e24]
+      - generic [ref=e25]:
+        - checkbox "I am a teacher" [ref=e26]
+        - generic [ref=e27]: I am a teacher
+      - button "Create Account" [ref=e28] [cursor=pointer]
+    - paragraph [ref=e29]: Already have an account? Log in

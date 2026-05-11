@@ -10,5 +10,5 @@ export type PostUsersBody = {
   teacher: boolean;
   email: string;
   password: string;
-  screen_name?: string;
+  screen_name: string;
 };

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { usePost, useGetStripJobId } from "../../api/generated/documents/documents";
+import { usePostDocuments, useGetDocumentsStripJobId } from "../../api/generated/documents/documents";
 
 export default function Upload() {
   const [file, setFile] = useState<File | null>(null);
@@ -7,9 +7,9 @@ export default function Upload() {
   const [jobId, setJobId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const uploadMutation = usePost();
+  const uploadMutation = usePostDocuments();
 
-  const { data: jobData } = useGetStripJobId(jobId ?? '', {
+  const { data: jobData } = useGetDocumentsStripJobId(jobId ?? '', {
     query: {
       enabled: !!jobId,
       refetchInterval: 2000,

@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useGetDocumentId } from "../../api/generated/documents/documents";
+import { useGetDocumentsDocumentId } from "../../api/generated/documents/documents";
 import { useGetCommentsDocumentId, usePostComments, useDeleteCommentsCommentId } from "../../api/generated/comments/comments";
 
 export default function Post() {
   const { postId = '' } = useParams<{ postId: string }>();
   const [commentText, setCommentText] = useState('');
 
-  const { data: postData, isLoading: postLoading } = useGetDocumentId(postId);
+  const { data: postData, isLoading: postLoading } = useGetDocumentsDocumentId(postId);
   const post = postData as any;
 
   const { data: commentsData, isLoading: commentsLoading, refetch: refetchComments } = useGetCommentsDocumentId(postId);
@@ -49,7 +49,7 @@ export default function Post() {
   const handleDownload = async () => {
     const match = document.cookie.match(/(?:^|;\s*)token=([^;]+)/);
     const token = match ? decodeURIComponent(match[1]) : null;
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/${postId}/download`, {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/documents/${postId}/download`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     if (!response.ok) { alert('Download failed.'); return; }

@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { useGet, usePostSearch, getRandom } from "../../api/generated/documents/documents";
+import { useGetDocuments, usePostDocumentsSearch, getDocumentsRandom } from "../../api/generated/documents/documents";
 import type { Get200Item, PostSearch200ResultsItem } from "../../api/generated/model";
 
 export default function Home() {
   const [search, setSearch] = useState('');
   const [isNavigating, setIsNavigating] = useState(false);
 
-  const { data: allDocs, isLoading } = useGet();
-  const searchMutation = usePostSearch();
+  const { data: allDocs, isLoading } = useGetDocuments();
+  const searchMutation = usePostDocumentsSearch();
 
   const handleSearchChange = (q: string) => {
     setSearch(q);
@@ -19,7 +19,7 @@ export default function Home() {
   const handleRandom = async () => {
     setIsNavigating(true);
     try {
-      const result = await getRandom() as any;
+      const result = await getDocumentsRandom() as any;
       const docId = result?.documentId;
       if (docId) {
         window.location.href = `/post/${docId}`;

@@ -31,7 +31,7 @@ export default function Register() {
     }
 
     registerMutation.mutate({
-      data: { email, password, name, teacher }
+      data: { email, password, name, teacher, screen_name: name }
     }, {
       onSuccess: () => {
         alert('Account created successfully! Redirecting to login...');
