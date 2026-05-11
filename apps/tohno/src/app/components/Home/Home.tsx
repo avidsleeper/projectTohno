@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useGetDocuments, usePostDocumentsSearch, getDocumentsRandom } from "../../api/generated/documents/documents";
 import type { GetDocuments200Item, GetDocumentsRandom200, PostDocumentsSearch200, PostSearch200ResultsItem } from "../../api/generated/model";
 import Navbar from '../Navbar/Navbar';
@@ -6,14 +6,24 @@ import Navbar from '../Navbar/Navbar';
 export default function Home() {
   const [search, setSearch] = useState('');
   const [isNavigating, setIsNavigating] = useState(false);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { data: allDocs, isLoading } = useGetDocuments();
   const searchMutation = usePostDocumentsSearch();
 
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, []);
+
   const handleSearchChange = (q: string) => {
     setSearch(q);
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
     if (q.trim()) {
-      searchMutation.mutate({ data: { query: q } });
+      debounceTimer.current = setTimeout(() => {
+        searchMutation.mutate({ data: { query: q } });
+      }, 750);
     }
   };
 
