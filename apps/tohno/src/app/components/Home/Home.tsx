@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useGetDocuments, usePostDocumentsSearch, getDocumentsRandom } from "../../api/generated/documents/documents";
-import type { Get200Item, PostSearch200ResultsItem } from "../../api/generated/model";
+import type { GetDocuments200Item, GetDocumentsRandom200, PostDocumentsSearch200, PostSearch200ResultsItem } from "../../api/generated/model";
 import Navbar from '../Navbar/Navbar';
 
 export default function Home() {
@@ -20,7 +20,7 @@ export default function Home() {
   const handleRandom = async () => {
     setIsNavigating(true);
     try {
-      const result = await getDocumentsRandom() as any;
+      const result = await getDocumentsRandom() as GetDocumentsRandom200;
       const docId = result?.documentId;
       if (docId) {
         window.location.href = `/post/${docId}`;
@@ -35,8 +35,8 @@ export default function Home() {
   };
 
   const searching = search.trim().length > 0;
-  const searchResults: PostSearch200ResultsItem[] = (searchMutation.data as any)?.results || [];
-  const docs: Get200Item[] = (allDocs as any) || [];
+  const searchResults: PostSearch200ResultsItem[] = (searchMutation.data as PostDocumentsSearch200 | undefined)?.results ?? [];
+  const docs: GetDocuments200Item[] = (allDocs as GetDocuments200Item[] | undefined) ?? [];
   const loading = searching ? searchMutation.isPending : isLoading;
 
   return (

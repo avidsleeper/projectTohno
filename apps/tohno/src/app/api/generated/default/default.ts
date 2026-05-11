@@ -30,6 +30,7 @@ import type {
   GetDebug401,
   GetDebug500,
   GetUsers500,
+  GetUsersMe200,
   GetUsersTotpDevices200Item,
   PostUsers201,
   PostUsers500,
@@ -396,6 +397,135 @@ export const usePostUsers = <TError = void | PostUsers500,
       return useMutation(getPostUsersMutationOptions(options), queryClient);
     }
     /**
+ * @summary Get the current user's profile
+ */
+export type getUsersMeResponse200 = {
+  data: GetUsersMe200
+  status: 200
+}
+
+export type getUsersMeResponse401 = {
+  data: void
+  status: 401
+}
+
+export type getUsersMeResponse404 = {
+  data: void
+  status: 404
+}
+
+export type getUsersMeResponse500 = {
+  data: void
+  status: 500
+}
+
+export type getUsersMeResponseSuccess = (getUsersMeResponse200) & {
+  headers: Headers;
+};
+export type getUsersMeResponseError = (getUsersMeResponse401 | getUsersMeResponse404 | getUsersMeResponse500) & {
+  headers: Headers;
+};
+
+export type getUsersMeResponse = (getUsersMeResponseSuccess | getUsersMeResponseError)
+
+export const getGetUsersMeUrl = () => {
+
+
+
+
+  return `/users/me`
+}
+
+export const getUsersMe = async ( options?: RequestInit): Promise<getUsersMeResponse> => {
+
+  return AXIOS_INSTANCE<getUsersMeResponse>(getGetUsersMeUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetUsersMeQueryKey = () => {
+    return [
+    `/users/me`
+    ] as const;
+    }
+
+
+export const getGetUsersMeQueryOptions = <TData = Awaited<ReturnType<typeof getUsersMe>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersMe>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetUsersMeQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUsersMe>>> = ({ signal }) => getUsersMe({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUsersMe>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetUsersMeQueryResult = NonNullable<Awaited<ReturnType<typeof getUsersMe>>>
+export type GetUsersMeQueryError = void
+
+
+export function useGetUsersMe<TData = Awaited<ReturnType<typeof getUsersMe>>, TError = void>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersMe>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUsersMe>>,
+          TError,
+          Awaited<ReturnType<typeof getUsersMe>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetUsersMe<TData = Awaited<ReturnType<typeof getUsersMe>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersMe>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUsersMe>>,
+          TError,
+          Awaited<ReturnType<typeof getUsersMe>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetUsersMe<TData = Awaited<ReturnType<typeof getUsersMe>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersMe>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get the current user's profile
+ */
+
+export function useGetUsersMe<TData = Awaited<ReturnType<typeof getUsersMe>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersMe>>, TError, TData>>, request?: SecondParameter<typeof AXIOS_INSTANCE>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetUsersMeQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+/**
  * @summary Login user and get JWT token
  */
 export type postUsersLoginResponse200 = {

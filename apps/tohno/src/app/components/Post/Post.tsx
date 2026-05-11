@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetDocumentsDocumentId } from "../../api/generated/documents/documents";
 import { useGetCommentsDocumentId, usePostComments, useDeleteCommentsCommentId } from "../../api/generated/comments/comments";
+import type { GetDocumentsDocumentId200, GetCommentsDocumentId200Item } from "../../api/generated/model";
 import Navbar from '../Navbar/Navbar';
 
 export default function Post() {
@@ -9,10 +10,10 @@ export default function Post() {
   const [commentText, setCommentText] = useState('');
 
   const { data: postData, isLoading: postLoading } = useGetDocumentsDocumentId(postId);
-  const post = postData as any;
+  const post = postData as GetDocumentsDocumentId200 | undefined;
 
   const { data: commentsData, isLoading: commentsLoading, refetch: refetchComments } = useGetCommentsDocumentId(postId);
-  const comments: any[] = (commentsData as any) || [];
+  const comments: GetCommentsDocumentId200Item[] = (commentsData as GetCommentsDocumentId200Item[] | undefined) ?? [];
 
   const commentMutation = usePostComments();
   const deleteMutation = useDeleteCommentsCommentId();
@@ -135,7 +136,7 @@ export default function Post() {
             ) : comments.length === 0 ? (
               <p className="text-gray-400 text-sm text-center py-8">No comments yet. Be the first!</p>
             ) : (
-              comments.map((comment: any) => (
+              comments.map((comment) => (
                 <div key={comment._id} className="border-b border-gray-100 pb-4 last:border-0">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-semibold text-gray-800">

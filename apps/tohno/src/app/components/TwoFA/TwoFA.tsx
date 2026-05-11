@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../Navbar/Navbar';
 import { usePostUsersTotpSetup, usePostUsersTotpVerify } from '../../api/generated/default/default';
+import type { PostUsersTotpSetup200 } from '../../api/generated/model';
 
 export default function TwoFA() {
   const [code, setCode] = useState('');
@@ -12,7 +13,7 @@ export default function TwoFA() {
     setupMutation.mutate({ data: {} });
   }, []);
 
-  const qrCode = (setupMutation.data as any)?.qrCode;
+  const qrCode = (setupMutation.data as PostUsersTotpSetup200 | undefined)?.qrCode;
 
   const handleVerify = () => {
     if (!code || code.length !== 6) {

@@ -1,41 +1,20 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../Navbar/Navbar';
-import { useGetUsersTotpDevices, deleteUsersTotpDeviceId } from '../../api/generated/default/default';
+import { useGetUsersTotpDevices, deleteUsersTotpDeviceId, useGetUsersMe } from '../../api/generated/default/default';
+import type { GetUsersMe200, GetUsersTotpDevices200Item } from '../../api/generated/model';
 
 export default function AccountSettings() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: rawUserData, isLoading: loading } = useGetUsersMe();
+  const user = rawUserData as GetUsersMe200 | undefined;
   const [twoFAEnabled, setTwoFAEnabled] = useState(false);
 
-  const { data: totpDevices, refetch: refetchDevices } = useGetUsersTotpDevices();
-
   useEffect(() => {
-    // Fetch user data from API
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/users/me`, {
-          headers: {
-            'Authorization': `Bearer ${document.cookie.match(/(?:^|;\s*)token=([^;]+)/)?.[1] || ''}`
-          }
-        });
+    if (user?.twoFAEnabled !== undefined) {
+      setTwoFAEnabled(user.twoFAEnabled);
+    }
+  }, [user?.twoFAEnabled]);
 
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data);
-          setTwoFAEnabled(data.twoFAEnabled || false);
-        } else {
-          alert('Failed to load account details');
-          window.location.href = '/login';
-        }
-      } catch (error) {
-        console.error('Fetch user error:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  const { data: totpDevices, refetch: refetchDevices } = useGetUsersTotpDevices();
 
   const handleEnable2FA = () => {
     window.location.href = '/2fa';
@@ -48,7 +27,7 @@ export default function AccountSettings() {
 
     try {
       const { data: devices } = await refetchDevices();
-      const ids = (devices as any[])?.map((d: any) => d._id).filter(Boolean) ?? [];
+      const ids = (devices as GetUsersTotpDevices200Item[] | undefined)?.map((d) => d._id).filter((id): id is string => Boolean(id)) ?? [];
       await Promise.all(ids.map((deviceId: string) => deleteUsersTotpDeviceId({ deviceId })));
       setTwoFAEnabled(false);
       alert('2FA disabled successfully');

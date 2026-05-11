@@ -27,6 +27,7 @@ export * from './getDocumentsRandom200';
 export * from './getDocumentsStripJobId200';
 export * from './getDocumentsStripJobId200Status';
 export * from './getUsers500';
+export * from './getUsersMe200';
 export * from './getUsersTotpDevices200Item';
 export * from './postComments201';
 export * from './postComments400';

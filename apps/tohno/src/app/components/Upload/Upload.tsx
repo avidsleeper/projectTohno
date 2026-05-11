@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePostDocuments, useGetDocumentsStripJobId } from "../../api/generated/documents/documents";
+import type { GetDocumentsStripJobId200, PostDocuments202 } from '../../api/generated/model';
 import Navbar from '../Navbar/Navbar';
 
 export default function Upload() {
@@ -18,9 +19,9 @@ export default function Upload() {
   });
 
   useEffect(() => {
-    const status = (jobData as any)?.status;
+    const status = (jobData as GetDocumentsStripJobId200 | undefined)?.status;
     if (status === 'done') {
-      const docId = (jobData as any)?.documentId;
+      const docId = (jobData as GetDocumentsStripJobId200 | undefined)?.documentId;
       window.location.href = docId ? `/post/${docId}` : '/';
     } else if (status === 'failed') {
       alert('Document processing failed. Please try uploading again.');
@@ -35,8 +36,8 @@ export default function Upload() {
     reader.onload = () => {
       const base64 = (reader.result as string).split(',')[1];
       uploadMutation.mutate({ data: { filename: file.name, data: base64 } }, {
-        onSuccess: (response: any) => {
-          const id = response?.jobId;
+        onSuccess: (response) => {
+          const id = (response as PostDocuments202)?.jobId;
           if (id) {
             setJobId(id);
           } else {
