@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { usePostUsersLogin } from "../../api/generated/default/default"; 
+import { usePostUsersLogin } from '../../api/generated/default/default';
+import type { PostUsersLogin200, PostUsersLoginBody } from '../../api/generated/model';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -21,12 +22,10 @@ export default function Login() {
 
     console.log("LOGIC CHECK - Sending to API:", { email, password, twoFACode });
 
-    loginMutation.mutate({
-      data: { email, password, twoFACode: twoFACode || undefined }
-    }, {
-      onSuccess: (response: any) => {
-        const token = response.token || response.data?.token; 
-        
+    const data: PostUsersLoginBody = { email, password, totp: twoFACode || undefined };
+    loginMutation.mutate({ data }, {
+      onSuccess: (response: PostUsersLogin200) => {
+        const { token } = response;
         if (token) {
           document.cookie = `token=${token}; path=/; max-age=86400`;
           alert('Logged in successfully!');
